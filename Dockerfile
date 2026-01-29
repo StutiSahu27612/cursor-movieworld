@@ -12,5 +12,5 @@ RUN mvn clean package -DskipTests
 # Expose port
 EXPOSE 8081
 
-# Run the application (find the JAR file automatically)
-CMD java -jar target/*.jar
+# Run the application - use the specific Spring Boot repackaged JAR
+CMD java -jar target/movieworld-0.0.1-SNAPSHOT.jar
