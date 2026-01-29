@@ -1,0 +1,6 @@
+com\example\movieworld\MovieWorldApplication.class
+com\example\movieworld\controller\MovieController.class
+com\example\movieworld\repository\MovieRepository.class
+com\example\movieworld\config\DataInitializer.class
+com\example\movieworld\controller\MovieController$HealthStatus.class
+com\example\movieworld\model\Movie.class

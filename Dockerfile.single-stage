@@ -1,0 +1,36 @@
+# Single-stage Dockerfile (simpler but larger image)
+FROM maven:3.8.6-openjdk-11
+
+WORKDIR /app
+
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy source code and build the application
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Create a non-root user to run the application
+RUN addgroup -S spring && adduser -S spring -G spring
+
+# Find and rename the JAR file for easier reference
+RUN find /app/target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" -exec mv {} /app/app.jar \;
+
+# Change ownership of the JAR file
+RUN chown spring:spring /app/app.jar
+
+# Switch to non-root user
+USER spring:spring
+
+# Expose the application port
+EXPOSE 8081
+
+# Set environment variables with defaults (can be overridden at runtime)
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/movieworld?createDatabaseIfNotExist=true&useSSL=true&serverTimezone=UTC
+ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_PASSWORD=root
+ENV SERVER_PORT=8081
+
+# Run the application with JVM optimizations
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/app.jar"]
