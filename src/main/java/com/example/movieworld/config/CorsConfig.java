@@ -16,10 +16,11 @@ public class CorsConfig {
         
         // Allow all origins (for development)
         // In production, specify your frontend URL
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
+        // Note: setAllowCredentials(true) cannot be used with addAllowedOrigin("*")
+        // If you need credentials, specify exact origins instead
         
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
