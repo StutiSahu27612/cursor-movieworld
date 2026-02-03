@@ -1,0 +1,12 @@
+{
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-11",
+            "path": "C:\\Program Files\\Java\\jdk-11.0.15",
+            "default": true
+        }
+    ],
+    "java.home": "C:\\Program Files\\Java\\jdk-11.0.15",
+    "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-11.0.15",
+    "java.compile.nullAnalysis.mode": "automatic"
+}

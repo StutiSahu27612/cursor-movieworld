@@ -1,0 +1,43 @@
+.movie-list {
+  width: 100%;
+}
+
+.section-title {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  color: #495057;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .movies-grid {
+    grid-template-columns: 1fr;
+  }
+}

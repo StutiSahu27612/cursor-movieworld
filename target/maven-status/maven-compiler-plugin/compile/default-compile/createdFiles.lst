@@ -1,3 +1,4 @@
+com\example\movieworld\config\CorsConfig.class
 com\example\movieworld\MovieWorldApplication.class
 com\example\movieworld\controller\MovieController.class
 com\example\movieworld\repository\MovieRepository.class
