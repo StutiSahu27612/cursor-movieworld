@@ -19,11 +19,14 @@ spec:
         command: ['sh', '-c']
         args:
         - |
+          echo "Waiting for MySQL service to be available..."
           until nc -z mysql-service 3306; do
-            echo "Waiting for MySQL to be ready..."
-            sleep 2
+            echo "MySQL service not ready, waiting..."
+            sleep 3
           done
-          echo "MySQL is ready!"
+          echo "MySQL service is up, waiting for MySQL to accept connections..."
+          sleep 10
+          echo "MySQL should be ready now!"
       containers:
       - name: movieworld
         image: us-central1-docker.pkg.dev/GCP_PROJECT_ID/GAR_REPOSITORY/IMAGE_NAME:latest

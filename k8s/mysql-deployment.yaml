@@ -38,25 +38,17 @@ spec:
         volumeMounts:
         - name: mysql-storage
           mountPath: /var/lib/mysql
-        # Health check probes
+        # Health check probes - using TCP port check for reliability
         readinessProbe:
-          exec:
-            command:
-            - mysqladmin
-            - ping
-            - -h
-            - localhost
-          initialDelaySeconds: 10
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 20
           periodSeconds: 5
           timeoutSeconds: 3
-          failureThreshold: 3
+          failureThreshold: 5
         livenessProbe:
-          exec:
-            command:
-            - mysqladmin
-            - ping
-            - -h
-            - localhost
+          tcpSocket:
+            port: 3306
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
