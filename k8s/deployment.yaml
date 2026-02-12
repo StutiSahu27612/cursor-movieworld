@@ -12,9 +12,21 @@ spec:
       labels:
         app: movieworld
     spec:
+      # Init container to wait for MySQL to be ready
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          until nc -z mysql-service 3306; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 2
+          done
+          echo "MySQL is ready!"
       containers:
       - name: movieworld
-        image: us-central1-docker.pkg.dev/GCP_PROJECT_ID/GAR_REPOSITORY/IMAGE_NAME::${{ github.sha }}
+        image: us-central1-docker.pkg.dev/GCP_PROJECT_ID/GAR_REPOSITORY/IMAGE_NAME:latest
         ports:
         - containerPort: 8081
         env:
@@ -39,3 +51,28 @@ spec:
           value: "org.hibernate.dialect.MySQL8Dialect"
         - name: SERVER_PORT
           value: "8081"
+        # Health check probes
+        startupProbe:
+          httpGet:
+            path: /api/movies/health
+            port: 8081
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /api/movies/health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /api/movies/health
+            port: 8081
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
