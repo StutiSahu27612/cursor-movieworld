@@ -10,3 +10,7 @@ public class MovieWorldApplication {
         SpringApplication.run(MovieWorldApplication.class, args);
     }
 }
+
+
+
+

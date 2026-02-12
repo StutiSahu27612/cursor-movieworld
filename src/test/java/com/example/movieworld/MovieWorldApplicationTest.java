@@ -9,6 +9,8 @@ import org.springframework.test.context.TestPropertySource;
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.datasource.driver-class-name=org.h2.Driver",
     "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
+    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
     "spring.sql.init.mode=never",
     "spring.jpa.defer-datasource-initialization=false"
 })

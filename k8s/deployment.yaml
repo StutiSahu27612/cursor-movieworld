@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movieworld
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: movieworld
+  template:
+    metadata:
+      labels:
+        app: movieworld
+    spec:
+      containers:
+      - name: movieworld
+        image: gcr.io/YOUR_PROJECT_ID/movieworld:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: movieworld-config
+              key: datasource.url
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: movieworld-secrets
+              key: datasource.username
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: movieworld-secrets
+              key: datasource.password
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          value: "com.mysql.cj.jdbc.Driver"
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: "org.hibernate.dialect.MySQL8Dialect"
+        - name: SERVER_PORT
+          value: "8081"
