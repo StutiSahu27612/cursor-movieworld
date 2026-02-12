@@ -69,6 +69,10 @@ jobs:
         service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
         token_format: 'access_token'
 
+    - name:Checking for WIF
+      run: |
+        gcloud storage ls
+
     - name: Configure Docker for GCR
       run: gcloud auth configure-docker
 
