@@ -69,7 +69,10 @@ jobs:
         service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
         token_format: 'access_token'
 
-    - name:Checking for WIF
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Verify WIF authentication
       run: |
         gcloud storage ls
 
@@ -82,9 +85,6 @@ jobs:
         docker push gcr.io/$PROJECT_ID/movieworld:$GITHUB_SHA
         docker tag gcr.io/$PROJECT_ID/movieworld:$GITHUB_SHA gcr.io/$PROJECT_ID/movieworld:latest
         docker push gcr.io/$PROJECT_ID/movieworld:latest
-
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
 
     - name: Configure kubectl
       run: |
