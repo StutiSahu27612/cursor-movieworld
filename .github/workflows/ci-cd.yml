@@ -27,6 +27,31 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Run Trivy vulnerability scanner in fs mode
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy filesystem scan results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-fs-scan-results
+        path: trivy-results.sarif
+        retention-days: 30
+
+    - name: Check Trivy results and fail on vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        exit-code: '1'
+        severity: 'CRITICAL,HIGH'
+
     - name: Build with Maven
       run: mvn clean compile
 
