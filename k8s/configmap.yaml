@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: movieworld-config
 data:
-  datasource.url: "jdbc:mysql://mysql-service:3306/movieworld?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+  datasource.url: "jdbc:mysql://34.173.49.4:3306/movieworld?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
