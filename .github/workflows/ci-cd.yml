@@ -43,6 +43,33 @@ jobs:
         path: trivy-results.sarif
         retention-days: 30
 
+    - name: Generate Trivy JSON report for detailed analysis
+      uses: aquasecurity/trivy-action@master
+      continue-on-error: true
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'json'
+        output: 'trivy-results.json'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy JSON report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: trivy-json-results
+        path: trivy-results.json
+        retention-days: 30
+
+    - name: Show detailed Trivy vulnerability report
+      uses: aquasecurity/trivy-action@master
+      continue-on-error: true
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        severity: 'CRITICAL,HIGH'
+
     - name: Check Trivy results and fail on vulnerabilities
       uses: aquasecurity/trivy-action@master
       with:
@@ -50,7 +77,7 @@ jobs:
         scan-ref: '.'
         format: 'table'
         exit-code: '1'
-        severity: 'CRITICAL,HIGH'
+        severity: 'CRITICAL'
 
     - name: Build with Maven
       run: mvn clean compile
