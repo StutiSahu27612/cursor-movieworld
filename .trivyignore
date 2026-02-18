@@ -1,0 +1,19 @@
+# Trivy Ignore File
+# This file contains CVEs that are acceptable risks for this project
+
+# CVE-2016-1000027: Spring Web HttpInvokerServiceExporter deserialization vulnerability
+# This CVE affects HttpInvokerServiceExporter which is not used in this application.
+# Fixing this requires upgrading to Spring Boot 3.x (Spring Framework 6.0.0+), which requires:
+# - Java 17+ (currently using Java 11)
+# - Migration from javax.* to jakarta.* packages
+# - Significant code changes
+# Risk: LOW - HttpInvokerServiceExporter is not used in this application
+# Planned: Upgrade to Spring Boot 3.x in future release
+CVE-2016-1000027
+
+# CVE-2022-1471: SnakeYAML Constructor Deserialization RCE
+# This CVE requires upgrading to SnakeYAML 2.0, which is a major version change that may break
+# compatibility with Spring Boot 2.7.18. We've upgraded to 1.33 which fixes CVE-2022-25857.
+# Risk: MEDIUM - Requires careful YAML input validation (Spring Boot handles this)
+# Planned: Upgrade to Spring Boot 3.x which uses SnakeYAML 2.0
+CVE-2022-1471
