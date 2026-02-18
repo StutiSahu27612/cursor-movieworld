@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.6-openjdk-11 AS builder
+FROM maven:3.9.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
@@ -9,10 +9,10 @@ COPY src ./src
 
 # Build the application
 RUN mvn clean package -DskipTests && \
-    mvn dependency:purge-local-repository -DmanualInclude=""
+  mvn dependency:purge-local-repository -DmanualInclude=""
 
 # Runtime stage
-FROM eclipse-temurin:11-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Install curl for health check
 RUN apk add --no-cache curl

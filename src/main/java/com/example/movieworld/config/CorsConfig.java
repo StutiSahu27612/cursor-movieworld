@@ -13,15 +13,17 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        
+
         // Allow all origins (for development)
         // In production, specify your frontend URL
-        config.addAllowedOrigin("*");
+        // Spring Boot 3.x: use addAllowedOriginPattern instead of addAllowedOrigin for
+        // wildcards
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        // Note: setAllowCredentials(true) cannot be used with addAllowedOrigin("*")
+        // Note: setAllowCredentials(true) cannot be used with wildcard origin patterns
         // If you need credentials, specify exact origins instead
-        
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

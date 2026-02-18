@@ -20,10 +20,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
 
@@ -77,7 +77,7 @@ jobs:
         scan-ref: '.'
         format: 'table'
         exit-code: '1'
-        severity: 'CRITICAL,HIGH'
+        severity: 'CRITICAL,HIGH' # only fail on critical and high vulnerabilities
 
     - name: Build with Maven
       run: mvn clean compile
@@ -99,15 +99,17 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      IMAGE_URL: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         cache: maven
 
@@ -129,11 +131,42 @@ jobs:
     - name: Configure Docker for Artifact Registry
       run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-    - name: Build and Push Docker image
-      run: |
-        IMAGE_URL="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}"
-        docker build -t $IMAGE_URL .
-        docker push $IMAGE_URL
+    - name: Build Docker image
+      run: docker build -t ${{ env.IMAGE_URL }} .
+
+    - name: Run Trivy vulnerability scanner on Docker image
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.IMAGE_URL }}
+        format: 'sarif'
+        output: 'trivy-image-results.sarif'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy Docker image scan results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-image-scan-results
+        path: trivy-image-results.sarif
+        retention-days: 30
+
+    - name: Show detailed Trivy Docker image vulnerability report
+      uses: aquasecurity/trivy-action@master
+      continue-on-error: true
+      with:
+        image-ref: ${{ env.IMAGE_URL }}
+        format: 'table'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Check Trivy Docker image results and fail on vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.IMAGE_URL }}
+        format: 'table'
+        exit-code: '1'
+        severity: 'CRITICAL,HIGH' # only fail on critical and high vulnerabilities
+
+    - name: Push Docker image
+      run: docker push ${{ env.IMAGE_URL }}
 
     - name: Configure kubectl
       run: |
@@ -145,8 +178,7 @@ jobs:
  
     - name: Update deployment image
       run: |
-        NEW_IMAGE="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPOSITORY }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}"
-        sed -i "s|image:.*|image: $NEW_IMAGE|g" k8s/deployment.yaml
+        sed -i "s|image:.*|image: ${{ env.IMAGE_URL }}|g" k8s/deployment.yaml
   
     - name: Deploy to GKE
       run: |

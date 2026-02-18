@@ -11,17 +11,10 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <spring.boot.version>2.7.18</spring.boot.version>
-        <!-- Override vulnerable dependency versions -->
-        <tomcat.version>9.0.109</tomcat.version>
-        <snakeyaml.version>1.33</snakeyaml.version>
-        <jackson.version>2.15.0</jackson.version>
-        <mysql.connector.version>8.2.0</mysql.connector.version>
-        <logback.version>1.2.13</logback.version>
-        <protobuf.version>3.25.5</protobuf.version>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <spring.boot.version>3.3.5</spring.boot.version>
     </properties>
 
     <dependencyManagement>
@@ -32,57 +25,6 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- Override vulnerable dependencies -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.connector.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-java</artifactId>
-                <version>${protobuf.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -101,12 +43,16 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- Cloud SQL Socket Factory for connecting to GCP Cloud SQL -->
+        <!-- Cloud SQL Connector for connecting to GCP Cloud SQL -->
+        <!-- Note: If using direct IP connection, this may not be needed -->
+        <!-- Uncomment if using Cloud SQL Proxy or Unix socket connections -->
+        <!--
         <dependency>
             <groupId>com.google.cloud.sql</groupId>
-            <artifactId>mysql-socket-factory-connector-j-8</artifactId>
-            <version>1.11.2</version>
+            <artifactId>cloud-sql-connector-jdbc-mysql</artifactId>
+            <version>1.14.1</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -136,22 +82,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <release>11</release>
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <jvm>${java.home}/bin/java</jvm>
-                </configuration>
+                <version>3.2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
